@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Home</title>
+</head>
+<body>
+
+<h2>Smart Home Control</h2>
+
+<button onclick="toggle(1)">Light 1</button>
+<button onclick="toggle(2)">Light 2</button>
+<button onclick="toggle(3)">Fan 1</button>
+<button onclick="toggle(4)">Fan 2</button>
+<button onclick="toggle(5)">Fan 3</button>
+<button onclick="toggle(6)">Light 3</button>
+
+<script>
+const API_KEY = "YOUR_API_KEY";
+const BIN_ID = "YOUR_BIN_ID";
+
+const url = "https://api.jsonbin.io/v3/b/" + BIN_ID;
+
+// Toggle function
+async function toggle(device) {
+
+  let res = await fetch(url + "/latest", {
+    headers: {"X-Master-Key": API_KEY}
+  });
+
+  let json = await res.json();
+  let data = json.record;
+
+  data["d" + device] = data["d" + device] ? 0 : 1;
+
+  await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Master-Key": API_KEY
+    },
+    body: JSON.stringify(data)
+  });
+
+  alert("Device " + device + " toggled");
+}
+</script>
+
+</body>
+</html>
